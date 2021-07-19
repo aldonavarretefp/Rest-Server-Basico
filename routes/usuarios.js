@@ -9,6 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 //Endpoints:
 //Obtener info
 router.get('/', usuariosGet);
+
 //Actualizando data
 router.put('/:id',[
     check('id','ID_INVALIDO').isMongoId(),
@@ -16,6 +17,7 @@ router.put('/:id',[
     check('rol').custom(esRoleValido),
     validarCampos
 ],usuariosPut)
+
 //Crear nuevos recursos
 router.post('/',[
     body("correo","CORREO_INVALIDO").isEmail(),
@@ -26,6 +28,7 @@ router.post('/',[
     body('rol').custom(esRoleValido),
     validarCampos
 ],usuariosPost);
+
 //Borrar, marcandolo nadamas
 router.delete('/:id',[
     check('id','ID_INVALIDO').isMongoId(),
