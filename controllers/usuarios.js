@@ -64,6 +64,7 @@ const usuariosPatch = (req, res =response)=> {
 }
 const usuariosDelete = async (req, res =response)=> {
     const {id} = req.params;
+    const usuarioAutenticado = req.usuario;
     const filter = { _id: id,estado:true };
     const update = { estado:false };
     const usuario = await  Usuario.findOneAndUpdate(filter,update);
@@ -76,7 +77,9 @@ const usuariosDelete = async (req, res =response)=> {
     res.json({
         msg: "deletedUser:",
         id,
-        usuario
+        usuario,
+        usuarioAutenticado
+        
     });
 }
 
