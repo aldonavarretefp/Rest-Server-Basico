@@ -6,6 +6,7 @@ const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch } 
 const { esRoleValido, existeEmail, existeUsuarioporId } = require('../helpers/db-validators');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
+const { esAdministrador } = require('../middlewares/validar-roles');
 
 //Endpoints:
 //Obtener info
@@ -33,6 +34,7 @@ router.post('/',[
 //Borrar, marcandolo nadamas
 router.delete('/:id',[
     validarJWT,
+    esAdministrador,
     check('id','ID_INVALIDO').isMongoId(),
     check('id').custom(existeUsuarioporId),
     validarCampos
