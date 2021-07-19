@@ -38,8 +38,11 @@ const usuarioSchema = new Schema({
 usuarioSchema.methods.toJSON = function(){
     //Desestructurando el objeto quitandole lo que no quiero
     // que se vea en el response
-    const {__v,password,...usuario} = this.toObject();
-    return usuario
+    const {__v,password,_id,...usuario} = this.toObject();
+    usuario['uid'] = _id;
+    return {
+        usuario,
+    }
 }
 
 module.exports = model('Usuario',usuarioSchema);
