@@ -4,9 +4,10 @@ const router = Router();
 
 const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch } = require('../controllers/usuarios');
 const { esRoleValido, existeEmail, existeUsuarioporId } = require('../helpers/db-validators');
-const { validarCampos } = require('../middlewares/validar-campos');
-const { validarJWT } = require('../middlewares/validar-jwt');
-const { esAdministrador, tieneRole } = require('../middlewares/validar-roles');
+// const {validarCampos}  = require('../middlewares/validar-campos');
+// const  {validarJWT}  = require('../middlewares/validar-jwt');
+// const  {esAdministrador, tieneRole}  = require('../middlewares/validar-roles');
+const { validarCampos,validarJWT,esAdministrador,tieneRole } = require('../middlewares');
 
 //Endpoints:
 //Obtener info
