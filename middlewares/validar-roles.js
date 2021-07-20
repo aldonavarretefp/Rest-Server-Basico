@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const {request, response} = require('express');
 const esAdministrador = (req=request,res = response,next)=>{
     if(!req.usuario){
         return res.status(500).json({
@@ -13,7 +14,23 @@ const esAdministrador = (req=request,res = response,next)=>{
     }
     next();
 }
+const tieneRole = (...roles )=>{
+    return (req=request,res=response,next) =>{
+        if(!req.usuario){
+            return res.status(500).json({
+                msg: "Se quiere verificar el rol sin validar el token primero"
+            });
+        }
+        if (!roles.includes(req.usuario.rol)){
+            return res.status(401).json({
+                msg: `El servicio requiere los siguientes roles: ${roles}`
+            })
+        }
+        next();
+    }
+}
 
 module.exports = {
-    esAdministrador
+    esAdministrador,
+    tieneRole
 }
