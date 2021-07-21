@@ -1,24 +1,25 @@
-const {response, request} = require('express');
+const { response, request } = require('express');
 const bcrypt = require('bcryptjs');
 
 const Usuario = require('../models/usuario');
 const { generarJWT } = require('../helpers/generarJWT');
+const { googleVerify } = require('../helpers/google-verify');
 
-const login = async (req=request,res = response)=>{
-    const {correo,password} = req.body;
+const login = async (req = request, res = response) => {
+    const { correo, password } = req.body;
     try {
 
         //Email existe
-        const usuario = await Usuario.findOne({correo,estado:true});
+        const usuario = await Usuario.findOne({ correo, estado: true });
         //Usuario activo
-        if (!usuario){
+        if (!usuario) {
             return res.status(400).json({
                 msg: "Usuario/Password no existe -correo"
             });
-            
+
         }
         //Verificar contrasenia
-        if(!bcrypt.compareSync(password,usuario.password)){
+        if (!bcrypt.compareSync(password, usuario.password)) {
             return res.status(400).json({
                 msg: "Usuario/Password no existe -pswd"
             });
@@ -36,15 +37,25 @@ const login = async (req=request,res = response)=>{
         return res.status(500).json({
             msg: "ERROR, hable con el administrador"
         });
-        
+
     }
 }
-const googleSignIn = (req=request,res=response) =>{
-    const {id_token} = req.body;
-    res.json({
-        msg: 'Todo OK!, Google SignIn',
-        id_token
-    })
+const googleSignIn = async (req = request, res = response) => {
+    const { id_token } = req.body;
+    try {
+        const googleUser = await googleVerify(id_token);
+        console.log(googleUser);
+        res.status(200).json({
+            msg: 'Todo OK!, Google SignIn',
+            id_token
+        })
+    } catch (error) {
+        res.status(400).json({
+            msg: 'Token de Google no valido',
+            id_token
+        })
+
+    }
 }
 module.exports = {
     login,
