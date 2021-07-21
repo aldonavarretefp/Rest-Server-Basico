@@ -43,11 +43,26 @@ const login = async (req = request, res = response) => {
 const googleSignIn = async (req = request, res = response) => {
     const { id_token } = req.body;
     try {
-        const googleUser = await googleVerify(id_token);
-        console.log(googleUser);
+        const {correo,nombre,img} = await googleVerify(id_token);
+
+        let usuario = await Usuario.findOne({correo,estado:true});
+        //Si no existe, crealo
+        if (!usuario){
+            const data = {
+                nombre,
+                correo,
+                password: 'Google Password xd',
+                img,
+                google:true 
+            };
+            usuario = new Usuario(data);
+            //Guardando en DB
+            await usuario.save();
+        }
+
         res.status(200).json({
             msg: 'Todo OK!, Google SignIn',
-            googleUser,
+            usuario:{nombre,correo,img},
             id_token
         })
     } catch (error) {
