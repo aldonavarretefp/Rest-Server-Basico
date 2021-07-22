@@ -12,7 +12,6 @@ const CategoriaSchema = new Schema({
     },
     img:{
         type:String,
-        required: true
     },
     usuario:{
         type: Schema.Types.ObjectId,
