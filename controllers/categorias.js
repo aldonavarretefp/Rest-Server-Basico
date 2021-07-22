@@ -1,12 +1,9 @@
 const {response} = require('express');
 
+
 const Categoria= require('../models/categoria')
 
 
-
-//TODO: 
-//Rutas:
-// MiddleWare para validar los ids
 
 
 const crearCategoria = async (req,res = response) => {
@@ -55,11 +52,12 @@ const obtenerCategorias = async (req,res = response) =>{
     const [categorias,total] = await Promise.all([
         Categoria.find(query)
                 .limit(Number(limite))
-                .skip(Number(skip)),
+                .skip(Number(skip))
+                .populate('usuario',"nombre"),
         Categoria.countDocuments(query)
     ]);
     res.status(200).json({
-        msg: 'Obtener Categorias de 3 en 3',
+        msg: 'obtenerCategorias:',
         total,
         categorias
     })
@@ -69,8 +67,7 @@ const obtenerCategorias = async (req,res = response) =>{
 //obtenerCategoria  - populate {} //DONE
 const obtenerCategoria = async (req,res = response) =>{
     const { id } = req.params;
-    console.log(id)
-    const categoria = await Categoria.findOne({estado:true,_id:id}).populate('usuario');
+    const categoria = await Categoria.findOne({estado:true,_id:id}).populate('usuario','nombre');
     if(!categoria){
         return res.status(404).json({
             msg: `Categoria con id ${id} no encontrada!`
@@ -82,17 +79,41 @@ const obtenerCategoria = async (req,res = response) =>{
     });
 
 }
-//actualizarCategoria (nombre) - estado:false
+//actualizarCategoria (nombre) - estado:false //DONE
 const actualizarCategoria = async (req,res = response ) =>{
-
+    const {id} = req.params;
+    const {nombre,estado,usuario,...data} = req.body;
+    const categoria = await Categoria.findOne({_id:id,estado:true})
+                            .populate('usuario','nombre');
+    if(!categoria){
+        return res.status(404).json({
+            msg: `Categoría con ID:${id} NOT FOUND`
+        })
+    }
+    categoria.nombre = nombre.toUpperCase();
+    await categoria.save();
+    res.status(200).json({
+        msg: 'categoriaActualizada:',
+        categoria 
+    })
 }
-//borrarCategoria id - estado:false
+//borrarCategoria id - estado:false //DONE
 const borrarCategoria = async (req,res = response) =>{
-    //Casos:
-        //1. Que ya este borrada
-        //2. Que no exista
-    const filter = {id,estado:true}
-
+    const {id} = req.params;
+    const filter = {_id:id,estado:true};
+    const update = {estado:false};
+    const options = {new:true};
+    const categoria = await Categoria.findOneAndUpdate(filter,update,options).populate('usuario','nombre');
+    if(!categoria){
+        return res.status(404).json({
+            msg: `No se encontró la categoría!`
+        });
+    }
+   
+    res.status(200).json({
+        msg: 'Categoria borrada!',
+        categoriaBorrada: categoria
+    })
 }
 
 
