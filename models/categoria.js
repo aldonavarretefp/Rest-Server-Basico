@@ -19,6 +19,7 @@ const CategoriaSchema = new Schema({
         required: true
     }
 });
+CategoriaSchema.methods.toJSON = function(){
 
     const {__v,estado,...data} = this.toObject();
     return data
