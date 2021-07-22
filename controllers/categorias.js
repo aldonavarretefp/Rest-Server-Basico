@@ -46,6 +46,59 @@ const crearCategoria = async (req,res = response) => {
 
 }
 
+//obtenerCategorias - paginado = total - populate //DONE
+const obtenerCategorias = async (req,res = response) =>{
+    const {limite = 3,skip = 0} = req.query;
+    const query = {estado:true};
+    if (Number(skip)>=Number(limite)) {
+        return res.json({msg:"SINTAXIS_INVALIDA"})
+        
+    };
+
+    const [categorias,total] = await Promise.all([
+        Categoria.find(query)
+                .limit(Number(limite))
+                .skip(Number(skip)),
+        Categoria.countDocuments(query)
+    ]);
+    res.status(200).json({
+        msg: 'Obtener Categorias de 3 en 3',
+        total,
+        categorias
+    })
+    
+}
+
+//obtenerCategoria  - populate {} //DONE
+const obtenerCategoria = async (req,res = response) =>{
+    const { id } = req.params;
+    console.log(id)
+    const categoria = await Categoria.findOne({estado:true,_id:id}).populate('usuario');
+    if(!categoria){
+        return res.status(404).json({
+            msg: `Categoria con id ${id} no encontrada!`
+        });
+    }
+    res.status(200).json({
+        msg: 'categoría:',
+        categoria
+    });
+
+}
+//actualizarCategoria (nombre) - estado:false
+const actualizarCategoria = async (req,res = response ) =>{
+
+}
+//borrarCategoria id - estado:false
+const borrarCategoria = async (req,res = response) =>{
+    //Casos:
+        //1. Que ya este borrada
+        //2. Que no exista
+    const filter = {id,estado:true}
+
+}
+
+
 module.exports = {
     crearCategoria
 }
