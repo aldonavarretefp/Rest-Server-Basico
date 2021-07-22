@@ -2,14 +2,15 @@ const {response} = require('express');
 
 const Categoria= require('../models/categoria')
 
-//TODO: Hey
-//asdsdsadasd
-//REVIEW:
+//TODO: 
 //obtenerCategorias - paginado = total - populate
 //obtenerCategoria  - populate {}
 //actualizarCategoria (nombre) - estado:false
 //borrarCategoria id - estado:false
-
+//TODO: 
+//Rutas:
+    // MiddleWare para validar los ids
+    
 
 const crearCategoria = async (req,res = response) => {
     
