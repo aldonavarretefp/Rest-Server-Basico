@@ -50,7 +50,7 @@ const usuariosPut = async (req, res =response)=> {
         restoUsuario.password = bcrypt.hashSync(password, salt);
     }
 
-    const usuario = await Usuario.findByIdAndUpdate(id,restoUsuario)
+    const usuario = await Usuario.findByIdAndUpdate(id,restoUsuario,{new:true})
     res.json({
         msg: "updatedUser",
         usuario,
@@ -67,7 +67,7 @@ const usuariosDelete = async (req, res =response)=> {
     const usuarioAutenticado = req.usuario;
     const filter = { _id: id,estado:true };
     const update = { estado:false };
-    const usuario = await  Usuario.findOneAndUpdate(filter,update);
+    const usuario = await  Usuario.findOneAndUpdate(filter,update,{new:true});
     if (!usuario){
         res.json({
             msg: "NO SE ENCONTRO NINGUN USUARIO ACTIVO",
@@ -78,7 +78,7 @@ const usuariosDelete = async (req, res =response)=> {
         msg: "deletedUser:",
         id,
         usuario,
-        usuarioAutenticado
+        borradoPor:usuarioAutenticado
         
     });
 }
