@@ -1,5 +1,6 @@
-const Role = require("../models/role");
-const Usuario = require("../models/usuario")
+const { Role,
+        Usuario,
+        Categoria } = require("../models");
 
 const esRoleValido = async (rol='')=>{
     const existeRol = await Role.findOne({rol});
@@ -16,9 +17,20 @@ const existeUsuarioporId = async (id)=>{
     if(!existeUsuario)throw new Error(`${id} no existe en la DB`);
 }
 
+const existeCategoriaPorNombre = async (nombre = '') =>{
+    //Las categorias estan en mayusculas
+    nombre = nombre.toUpperCase();
+
+    const filter = {nombre};
+    const existeCategoria = await Categoria.findOne(filter);
+    if (!existeCategoria){
+        throw new Error(`Categoria ${nombre} no existe en la base de datos`);
+    }
+}
 
 module.exports = {
     esRoleValido,
     existeEmail,
-    existeUsuarioporId
+    existeUsuarioporId,
+    existeCategoriaPorNombre
 };
