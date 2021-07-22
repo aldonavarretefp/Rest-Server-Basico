@@ -13,10 +13,13 @@ router.get("/",(req,res)=>{
     })
 });
 //Obtener una categoria por id - publico
-router.get("/:id",(req,res)=>{
+router.get("/:id",[
+    //TODO:
+    //check('nombre','El nombre es obligatorio')
+],(req,res)=>{
     res.json({
         msg:'get - id'
-    })
+    });
 });
 //Crear una nueva categoria - privado - cualquier persona con un token valido
 router.post("/",[
@@ -25,7 +28,10 @@ router.post("/",[
     validarCampos
 ],crearCategoria);
 //Actualizar - privado - cualquiera con token valido
-router.put("/:id",(req,res)=>{
+router.put("/:id",[
+    //TODO:
+    //Por nombre actualizar la categoria
+],(req,res)=>{
     res.json({
         msg:'put'
     })

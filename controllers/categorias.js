@@ -2,13 +2,14 @@ const {response} = require('express');
 
 const Categoria= require('../models/categoria')
 
-//TODO: 
+//TODO: Hey
+//asdsdsadasd
+//REVIEW:
 //obtenerCategorias - paginado = total - populate
 //obtenerCategoria  - populate {}
 //actualizarCategoria (nombre) - estado:false
 //borrarCategoria id - estado:false
 
-//TODO:
 
 const crearCategoria = async (req,res = response) => {
     
@@ -35,7 +36,6 @@ const crearCategoria = async (req,res = response) => {
             msg: `Categoria ${nombre} creada!`,
             categoria
         });
-        
     } catch (error) {
         res.status(400).json({
             msg: `Hubo un error al crear la Categoria`,
