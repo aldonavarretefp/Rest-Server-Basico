@@ -2,6 +2,14 @@ const {response} = require('express');
 
 const Categoria= require('../models/categoria')
 
+//TODO: 
+//obtenerCategorias - paginado = total - populate
+//obtenerCategoria  - populate {}
+//actualizarCategoria (nombre) - estado:false
+//borrarCategoria id - estado:false
+
+//TODO:
+
 const crearCategoria = async (req,res = response) => {
     
     try {
