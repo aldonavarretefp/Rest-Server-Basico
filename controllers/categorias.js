@@ -2,15 +2,12 @@ const {response} = require('express');
 
 const Categoria= require('../models/categoria')
 
-//TODO: 
-//obtenerCategorias - paginado = total - populate
-//obtenerCategoria  - populate {}
-//actualizarCategoria (nombre) - estado:false
-//borrarCategoria id - estado:false
+
+
 //TODO: 
 //Rutas:
-    // MiddleWare para validar los ids
-    
+// MiddleWare para validar los ids
+
 
 const crearCategoria = async (req,res = response) => {
     
@@ -27,9 +24,9 @@ const crearCategoria = async (req,res = response) => {
             nombre,
             usuario:req.usuario._id
         }
-    
+        
         const categoria = new Categoria(data);
-    
+        
         //guardar DB
         await categoria.save();
     
@@ -100,5 +97,9 @@ const borrarCategoria = async (req,res = response) =>{
 
 
 module.exports = {
-    crearCategoria
+    crearCategoria,
+    obtenerCategorias,
+    obtenerCategoria, 
+    actualizarCategoria,
+    borrarCategoria
 }
