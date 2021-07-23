@@ -15,7 +15,6 @@ const crearProducto = async (req,res = response) => {
             Producto.findOne({nombre}),
             Categoria.findOne(query)
         ]);
-        console.log(productoDB,categoria);
         
         if (productoDB) {
             return res.status(400).json({
@@ -57,17 +56,18 @@ const obtenerProductos = async (req,res = response) =>{
         
     };
 
-    const [categorias,total] = await Promise.all([
-        Categoria.find(query)
+    const [productos,total] = await Promise.all([
+        Producto.find(query)
                 .limit(Number(limite))
                 .skip(Number(skip))
-                .populate('usuario',"nombre"),
-        Categoria.countDocuments(query)
+                .populate('usuario',"nombre")
+                .populate('categoria','nombre'),
+        Producto.countDocuments(query)
     ]);
     res.status(200).json({
         msg: 'obtenerProductos:',
         total,
-        categorias
+        productos
     })
     
 }
@@ -75,34 +75,40 @@ const obtenerProductos = async (req,res = response) =>{
 //obtenerProducto  - populate {} 
 const obtenerProducto = async (req,res = response) =>{
     const { id } = req.params;
-    const categoria = await Categoria.findOne({estado:true,_id:id}).populate('usuario','nombre');
-    if(!categoria){
+    const producto = await Producto.findOne({estado:true,_id:id})
+                        .populate('usuario','nombre')
+                        .populate('categoria','nombre');;
+    if(!producto){
         return res.status(404).json({
-            msg: `Categoria con id ${id} no encontrada!`
+            msg: `Producto con id ${id} no encontrado!`
         });
     }
     res.status(200).json({
-        msg: 'categoría:',
-        categoria
+        msg: 'producto:',
+        producto
     });
 
 }
 //actualizarProducto (nombre) - estado:false 
 const actualizarProducto = async (req,res = response ) =>{
     const {id} = req.params;
-    const {nombre,estado,usuario,...data} = req.body;
-    const categoria = await Categoria.findOne({_id:id,estado:true})
-                            .populate('usuario','nombre');
-    if(!categoria){
+    const filter = {_id:id,estado:true};
+    const {estado,usuario,categoria,...data} = req.body;
+    const options = {new:true};
+    if (data.nombre){data.nombre = data.nombre.toUpperCase()};
+    const update = data
+    const producto = await Producto.findOneAndUpdate(filter,update,options)
+                            .populate('usuario','nombre')
+                            .populate('categoria','nombre');
+    if(!producto){
         return res.status(404).json({
-            msg: `Categoría con ID:${id} NOT FOUND`
+            msg: `Producto con ID:${id} NOT FOUND`
         })
     }
-    categoria.nombre = nombre.toUpperCase();
-    await categoria.save();
+
     res.status(200).json({
-        msg: 'categoriaActualizada:',
-        categoria 
+        msg: 'productoActualizada:',
+        producto 
     })
 }
 //borrarProducto id - estado:false 
@@ -111,16 +117,18 @@ const borrarProducto = async (req,res = response) =>{
     const filter = {_id:id,estado:true};
     const update = {estado:false};
     const options = {new:true};
-    const categoria = await Categoria.findOneAndUpdate(filter,update,options).populate('usuario','nombre');
-    if(!categoria){
+    const producto = await Producto.findOneAndUpdate(filter,update,options)
+                                    .populate('usuario','nombre')
+                                    .populate('categoria','nombre');
+    if(!producto){
         return res.status(404).json({
-            msg: `No se encontró la categoría!`
+            msg: `No se encontró el producto!`
         });
     }
    
     res.status(200).json({
-        msg: 'Categoria borrada!',
-        categoriaBorrada: categoria
+        msg: 'Producto borrado!',
+        producto
     })
 }
 
