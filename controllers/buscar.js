@@ -4,29 +4,44 @@ const {ObjectId} = require('mongoose').Types;
 
 const {Usuario,Categoria,Producto} = require('../models');
 
-const coleccionesPermitidas =[
+const coleccionesPermitidas = [
     'usuarios',
     'categorias',
     'productos',
     'roles'
 ]
 const buscarUsuarios = async (termino = '',res = response) =>{
+    const filter = {_id:termino,estado:true};
+
+    // Por correo
     const esMongoId = ObjectId.isValid(termino);
-    const filter = {_id:termino,estado:true}
     if (esMongoId) {
         const usuario = await Usuario.findOne(filter);
-        return res.json({
+        return res.status(200).json( {
             msg: 'usuarioBuscado:',
-            results:usuario? [usuario]: []
+            results: usuario? [usuario]: []
         })
+    }else{
+       // Por nombre
+       const regex = new RegExp(termino,'i');
+       const usuarios = await Usuario.find({
+           estado:true,
+           $or:[{nombre:regex},{correo:regex}]
+        });
+       return res.status(200).json( {
+           msg: 'usuariosEncontrados:',
+           results: usuarios? [usuarios]: []
+       })
     }
-    return res.status(404).json({
-        msg: `usuario ${termino} no encontrado!`
+}
+const buscarProducto = async (termino = '',res = response) =>{
+    res.json({
+        msg: 'buscarProducto:',
     })
 }
 
 const buscar = (req,res = response) =>{
-    const {coleccion,termino} = req.params;
+    const {termino,coleccion} = req.params;
 
     if (!coleccionesPermitidas.includes(coleccion)){
         return res.status(400).json({
@@ -42,12 +57,15 @@ const buscar = (req,res = response) =>{
             //Linea
             break;
         case 'productos':
-            //Linea
+            buscarProducto(termino,res)
             break;
         case 'roles':
             //Linea
             break;
         default:
+            res.status(500).json({
+                msg: `Error, coleccion ${coleccion} no encontrada,si cree que se trata de un error, comuniquese con el desarrollador`
+            });
             break;
     }
 }
