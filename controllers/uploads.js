@@ -1,6 +1,7 @@
 const path = require('path');
 
 const { response} = require('express');
+const { extname } = require('path');
 
 
 const cargarArchivo = (req,res = response) => {
@@ -13,18 +14,30 @@ const cargarArchivo = (req,res = response) => {
     }
 
     const {archivo} = req.files;
-    
+    const separarPorPunto = archivo.name.split('.') ; // ['nombredelarchivo','extension' ]
+    const extension = separarPorPunto[separarPorPunto.length-1];
+    //Validar la extension
+    const extensionesValidas  = ['png','jpg','jpeg','gif'];
+    if(!extensionesValidas.includes(extension)){
+        return res.status(404).json({
+            msg: `Extensión ${extension} inválida`,
+            extensionesValidas
+        });
+    }
+
+
+
     uploadPath = path.join(__dirname,'../uploads/',archivo.name);
 
-    archivo.mv(uploadPath, function(err) {
-        if (err) {
-        return res.status(500).json({err});
-        }
+    // archivo.mv(uploadPath, function(err) {
+    //     if (err) {
+    //     return res.status(500).json({err});
+    //     }
 
-        res.json({
-            msg:`Archivo subido a ${uploadPath}`
-        });
-    });
+    //     res.json({
+    //         msg:`Archivo subido a ${uploadPath}`
+    //     });
+    // });
 
 }
 
