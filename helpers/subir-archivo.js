@@ -6,11 +6,7 @@ const subirArchivo = ({archivo},extensionesValidas = ['png','jpg','jpeg','gif'],
         const separarPorPunto = archivo.name.split('.') ; // ['nombredelarchivo','extension' ]
         const extension = separarPorPunto[separarPorPunto.length-1];
         if(!extensionesValidas.includes(extension)){
-            // return res.status(404).json({
-            //     msg: `Extensión ${extension} inválida`,
-            //     extensionesValidas
-            // });
-            return reject(`Extensión ${extension} inválida`)
+            return reject(`Extensión ${extension} no permitida - ${extensionesValidas}`)
         }
         const nombreTemp = uuidv4() + "." + extension;
     
@@ -18,13 +14,10 @@ const subirArchivo = ({archivo},extensionesValidas = ['png','jpg','jpeg','gif'],
     
         archivo.mv(uploadPath, function(err) {
             if (err) {
-            // return res.status(500).json({err});
-            return reject(err)
+                return reject(err)
             }
             resolve(nombreTemp);
-            // res.json({
-            //     msg:`Archivo subido a ${uploadPath}`
-            // });
+
         });
 
     })
