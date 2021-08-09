@@ -26,11 +26,19 @@ const existeCategoriaPorNombre = async (nombre = '') =>{
     if (!existeCategoria){
         throw new Error(`Categoria ${nombre} no existe en la base de datos`);
     }
+};
+
+const coleccionesPermitidas = async (coleccion = '',colecciones = []) => {
+    const incluida = colecciones.includes(coleccion);
+    if(!incluida) {
+        throw new Error(` La colección ${coleccion} no es permitida en [${colecciones}]`);
+    }
 }
 
 module.exports = {
     esRoleValido,
     existeEmail,
     existeUsuarioporId,
-    existeCategoriaPorNombre
+    existeCategoriaPorNombre,
+    coleccionesPermitidas
 };
