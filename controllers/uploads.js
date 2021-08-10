@@ -1,4 +1,7 @@
 
+const path = require('path');
+const fs = require('fs');
+
 const { response} = require('express');
 
 const { subirArchivo } = require('../helpers/subir-archivo');
@@ -48,6 +51,21 @@ const actualizarImagen = async  (req,res=response) => {
                 msg:'Comuniquese con el administrador para este error'
             });        
     }
+
+    // Limpiar imagenes previas
+
+    try {
+        if(modelo.img){
+            const pathImagen = path.join(__dirname,'../uploads',coleccion,modelo.img);
+        if(fs.existsSync(pathImagen)){
+            fs.unlinkSync(pathImagen);
+        }
+        }
+    } catch (error) {
+        return res.status(400).json({error});
+    }
+
+
     const nombreImg = await subirArchivo(req.files,undefined,coleccion);
     modelo.img = nombreImg;
 
