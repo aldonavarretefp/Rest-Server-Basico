@@ -6,27 +6,20 @@ const {Usuario,Producto} = require('../models');
 
 
 const cargarArchivo = async (req,res = response) => {
-    if (!req.files || Object.keys(req.files).length === 0 || !req.files.archivo) {
-        res.status(400).json({
-            msg:"No hay archivos en la petición"
-        });
-        return;
-    }
     try {
         const nombre = await subirArchivo(req.files,undefined,'img');
         res.status(200).json({
             nombre
         });
-        
-    } catch (error) {
+    } catch (msg) {
         res.status(400).json({
-            error
+            msg
         })
     }
-    
 }
 
 const actualizarImagen = async  (req,res=response) => {
+
     const {id,coleccion} = req.params;
 
     let modelo;
@@ -55,10 +48,8 @@ const actualizarImagen = async  (req,res=response) => {
                 msg:'Comuniquese con el administrador para este error'
             });        
     }
-
     const nombreImg = await subirArchivo(req.files,undefined,coleccion);
     modelo.img = nombreImg;
-
 
     await modelo.save();
 
