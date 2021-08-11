@@ -73,8 +73,50 @@ const actualizarImagen = async  (req,res=response) => {
 
     res.status(200).json(modelo)
 }
+const mostrarImagen = async (req,res = response )=>{
+    const {id,coleccion} = req.params;
+
+
+    let modelo;
+    const filters = {estado:true,_id:id}
+
+    switch (coleccion) {
+        case 'usuarios':
+            modelo = await Usuario.findOne(filters)
+            if (!modelo){
+                return res.status(404).json({
+                    msg: `El usuario con ID ${id} no existe`
+                })
+            }
+        break;
+        case 'productos':
+            modelo = await Producto.findOne(filters).populate('categoria');
+            if (!modelo){
+                return res.status(404).json({
+                    msg: `El producto con ID ${id} no existe`
+                });
+            }
+        break;
+    
+        default:
+            return res.status(500).json({
+                msg:'Comuniquese con el administrador para este error'
+            });        
+    }
+
+        if(modelo.img){
+            const pathImagen = path.join(__dirname,'../uploads',coleccion,modelo.img);
+            if(fs.existsSync(pathImagen)){
+                //Mostrar imagen
+                return res.status(200).sendFile(pathImagen);
+            }
+        }
+        const pathNoImageFound = path.join(__dirname,'../assets','no-image.jpg');
+        res.status(404).sendFile(pathNoImageFound);
+};
 
 module.exports = {
     cargarArchivo,
-    actualizarImagen
+    actualizarImagen,
+    mostrarImagen
 }
