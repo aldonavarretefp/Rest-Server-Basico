@@ -3,6 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 const { response} = require('express');
+const cloudinary = require('cloudinary').v2
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 const { subirArchivo } = require('../helpers/subir-archivo');
 const {Usuario,Producto} = require('../models');
@@ -73,6 +75,63 @@ const actualizarImagen = async  (req,res=response) => {
 
     res.status(200).json(modelo)
 }
+
+const actualizarImagenCloudinary = async  (req,res=response) => {
+
+    const {id,coleccion} = req.params;
+
+    let modelo;
+    const filters = {estado:true,_id:id}
+
+    switch (coleccion) {
+        case 'usuarios':
+            modelo = await Usuario.findOne(filters)
+            if (!modelo){
+                return res.status(404).json({
+                    msg: `El usuario con ID ${id} no existe`
+                })
+            }
+        break;
+        case 'productos':
+            modelo = await Producto.findOne(filters).populate('categoria');
+            if (!modelo){
+                return res.status(404).json({
+                    msg: `El producto con ID ${id} no existe`
+                });
+            }
+        break;
+    
+        default:
+            return res.status(500).json({
+                msg:'Comuniquese con el administrador para este error'
+            });        
+    }
+
+    // Limpiar imagenes previas
+
+    try {
+        if(modelo.img){ //https://res.cloudinary.com/aldonavarrete/image/upload/v1628775139/d7tq0clps8x1tviyhucm.png
+            const nombreArray = modelo.img.split('/');
+            const id_con_extension = nombreArray[nombreArray.length - 1];
+            const [public_id] = id_con_extension.split('.');
+            cloudinary.uploader.destroy(public_id);
+        }
+    } catch (error) {
+        return res.status(400).json({error});
+    }
+
+    const { tempFilePath } =req.files.archivo;
+    const {secure_url} = await cloudinary.uploader.upload(tempFilePath);
+
+    modelo.img = secure_url;
+
+    await modelo.save();
+
+    res.status(200).json(modelo);
+}
+
+
+
 const mostrarImagen = async (req,res = response )=>{
     const {id,coleccion} = req.params;
 
@@ -118,5 +177,6 @@ const mostrarImagen = async (req,res = response )=>{
 module.exports = {
     cargarArchivo,
     actualizarImagen,
-    mostrarImagen
+    mostrarImagen,
+    actualizarImagenCloudinary
 }

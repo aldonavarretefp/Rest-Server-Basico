@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const {body,check} = require('express-validator');
-const { cargarArchivo, actualizarImagen, mostrarImagen } = require('../controllers/uploads');
+const { cargarArchivo, actualizarImagen, mostrarImagen, actualizarImagenCloudinary } = require('../controllers/uploads');
 const { coleccionesPermitidas } = require('../helpers/db-validators');
 const { validarArchivoSubir ,validarCampos } = require('../middlewares');
 
@@ -23,7 +23,7 @@ router.put('/:coleccion/:id',[
     check('coleccion').custom(c => coleccionesPermitidas(c,['usuarios','productos'])),
     validarCampos
 
-],actualizarImagen);
+],actualizarImagenCloudinary);
 
 
 module.exports = router;
