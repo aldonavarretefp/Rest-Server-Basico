@@ -5,7 +5,6 @@ const fs = require('fs');
 const { response} = require('express');
 const cloudinary = require('cloudinary').v2
 cloudinary.config(process.env.CLOUDINARY_URL);
-
 const { subirArchivo } = require('../helpers/subir-archivo');
 const {Usuario,Producto} = require('../models');
 

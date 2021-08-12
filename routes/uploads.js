@@ -7,16 +7,19 @@ const { validarArchivoSubir ,validarCampos } = require('../middlewares');
 
 const router = Router();
 
+// Cargar Archivos
+router.post('/',[
+    validarArchivoSubir
+], cargarArchivo);
+
+//Mostrar Imagen
 router.get('/:coleccion/:id',[
     check('id','MONGOID no valido').isMongoId(),
     check('coleccion').custom(c => coleccionesPermitidas(c,['usuarios','productos'])),
     validarCampos
 ],mostrarImagen)
 
-router.post('/',[
-    validarArchivoSubir
-], cargarArchivo);
-
+// actualizar Imagen
 router.put('/:coleccion/:id',[
     validarArchivoSubir,
     check('id','MONGOID no valido').isMongoId(),
